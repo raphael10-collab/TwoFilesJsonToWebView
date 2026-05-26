@@ -193,6 +193,7 @@ void SimulHelper::RunHello(std::string hellostring)
     {
         wxLogError(_("JSON error in %s (%s)."), __FUNCTION__, e.what());
     }
+
     m_webView->RunScriptAsync(script, (void*)HelloConsoleLog);
 }
 
@@ -235,6 +236,9 @@ namespace MyNs {
 
                 CreateSimulPage(tabPageH);
 
+                Bind(wxEVT_WEBVIEW_ERROR, &Frame::OnError, this, m_browser->GetId());
+                Bind(wxEVT_WEBVIEW_SCRIPT_RESULT, &Frame::OnScriptResult, this, m_browser->GetId());
+
             }
 
            private:
@@ -242,6 +246,8 @@ namespace MyNs {
                 std::wstring sep = (os_family == "Windows") ? L"\\" : L"/";
 
                 std::string currentWd_s = std::filesystem::current_path();
+
+                wxInfoBar *m_info;
 
                 wxSize sizeTabControl1 = wxGetDisplaySize();
 
@@ -264,6 +270,8 @@ namespace MyNs {
                 void SimulOnWebViewMessageReceived(wxWebViewEvent& evt);
                 void RunHello();
                 wxPanel* CreateSimulPage(wxNotebookPage* parent);
+                void OnScriptResult(wxWebViewEvent& evt);
+                void OnError(wxWebViewEvent& evt);
                 void SendStringToJS( const wxString &payload );
     };
 
@@ -424,6 +432,9 @@ namespace MyNs {
         wxBoxSizer* simul_panel_sizer = new wxBoxSizer(wxVERTICAL);
         simulPanel->SetSizer(simul_panel_sizer);
 
+        m_info = new wxInfoBar(parent);
+        topSimulSizer->Add(m_info, wxSizerFlags().Expand());
+
         #if wxUSE_WEBVIEW_EDGE
         // Check if a fixed version of edge is present in $executable_path/edge_fixed and use it
         wxFileName edgeFixedDir(wxStandardPaths::Get().GetExecutablePath());
@@ -472,6 +483,43 @@ namespace MyNs {
         RunHello();
 
         return simulPanel;
+    }
+
+    void Frame::OnScriptResult(wxWebViewEvent& evt)
+    {
+        if (evt.IsError())
+            wxLogError("Async script execution failed: %s", evt.GetString());
+        else
+            wxLogMessage("Async script result received; value = %s", evt.GetString());
+    }
+
+    void Frame::OnError(wxWebViewEvent& evt)
+    {
+    #define WX_ERROR_CASE(type) \
+        case type: \
+            category = #type; \
+            break;
+
+        wxString category;
+        switch (evt.GetInt())
+        {
+            WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_CONNECTION);
+            WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_CERTIFICATE);
+            WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_AUTH);
+            WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_SECURITY);
+            WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_NOT_FOUND);
+            WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_REQUEST);
+            WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_USER_CANCELLED);
+            WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_OTHER);
+        }
+
+        wxLogMessage("Error; url='%s', error='%s (%s)'",
+                 evt.GetURL(), category, evt.GetString());
+
+        //Show the info bar with an error
+        m_info->ShowMessage(_("An error occurred loading ") + evt.GetURL() + "\n" +
+        "'" + category + "'", wxICON_ERROR);
+
     }
 
     void Frame::SendStringToJS( const wxString &payload )
