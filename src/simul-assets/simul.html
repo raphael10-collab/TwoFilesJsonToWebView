@@ -1,0 +1,47 @@
+<html>
+
+<head>
+    <title>Simul</title>
+    <meta charset="utf-8" />
+</head>
+
+<body>
+
+    <script type="text/javascript">
+
+    function SendMessage(prefix, params)
+    {
+        let message = 'simul::'.concat(prefix, '\t', JSON.stringify(params));
+        if (window.wxmsg && typeof window.wxmsg.postMessage === 'function') {
+            window.wxmsg.postMessage(message);
+        }
+        else
+        {
+            console.error("window.wxmsg is not defined or postMessage is not a function.");
+        }
+    }
+
+    function SendErrorMessage(error, where)
+    {
+        SendMessage('error\t'.concat(error.name, '\t', where, '\t', error.message));
+    }
+
+    function HelloConsoleLog(newhellotxtJSON)
+    {
+        try
+        {
+            let hello = JSON.parse(newhellotxtJSON);
+            console.log(hello);
+            //console.log(newhellotxtJSON.Hello);
+        }
+        catch (e)
+        {
+            SendErrorMessage(e, arguments.callee.name);
+        }
+    }
+
+    </script>
+
+</body>
+
+</html>
