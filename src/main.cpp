@@ -1,74 +1,18 @@
 #include "wx/wx.h"
 #include "wx/app.h"
-#include <wx/sckipc.h>
 #include <wx/log.h>
-#include <wx/thread.h>
-#include <wx/checkbox.h>
-#include "wx/radiobox.h"
-#include "wx/statbox.h"
 #include "wx/config.h"
-#include "wx/filedlg.h"
 #include "wx/display.h"
 #include <wx/dir.h>
-#include <wx/msgqueue.h>
-#include "wx/dataview.h"
-#include <wx/hyperlink.h>
-#include "wx/datetime.h"
-#include "wx/scrolwin.h"
-#include "wx/glcanvas.h"
-#include <wx/persist/toplevel.h>
-#include "wx/tipwin.h"
-#include "wx/tipdlg.h"
-#include "wx/accel.h"
-#include "wx/popupwin.h"
 #include "wx/toolbook.h"
 #include "wx/aui/auibook.h"
 #include "wx/aui/auibar.h"
 #include "wx/infobar.h"
-#include "wx/filesys.h"
-#include "wx/listctrl.h"
-#include "wx/fs_arc.h"
-#include "wx/fs_mem.h"
 #include "wx/stdpaths.h"
-#include <wx/filename.h>
-#include "wx/colordlg.h"
-#include "wx/dcclient.h"
 #include "wx/aui/framemanager.h"
 #include "wx/menu.h"
-#include "wx/mimetype.h"
-#include "wx/filefn.h"
-#include "wx/artprov.h"
-#include "wx/cmdline.h"
-#include "wx/notifmsg.h"
-#include "wx/settings.h"
-#include "wx/richtext/richtextctrl.h"
-#include "wx/richtext/richtextstyles.h"
-#include "wx/richtext/richtextformatdlg.h"
-#include "wx/richtext/richtextsymboldlg.h"
-#include "wx/richtext/richtextstyledlg.h"
-#include "wx/richtext/richtextimagedlg.h"
-#include "wx/richtext/richtextprint.h"
-#include "wx/richtext/richtextbuffer.h"
-#include "wx/mousestate.h"
-#include "wx/radiobut.h"
-#include "wx/image.h"
-#include "wx/artprov.h"
-#include "wx/dcbuffer.h"
-#include "wx/dcgraph.h"
-#include "wx/overlay.h"
-#include "wx/graphics.h"
-#include "wx/filename.h"
-#include "wx/metafile.h"
-#include "wx/settings.h"
-#include "wx/gdicmn.h"
 #include "wx/platinfo.h"
 
-#if wxUSE_SVG
-#include "wx/dcsvg.h"
-#endif
-#if wxUSE_POSTSCRIPT
-#include "wx/dcps.h"
-#endif
 #include "wx/webview.h"
 #if wxUSE_WEBVIEW_IE
 #include "wx/msw/webview_ie.h"
@@ -79,46 +23,18 @@
 #include "wx/webviewarchivehandler.h"
 #include "wx/webviewfshandler.h"
 
-#if wxUSE_STC
-#include "wx/stc/stc.h"
-#else
-#include "wx/textctrl.h"
-#endif
-
 #include <filesystem>
 #include <iostream>
-#include <text_encoding>
 #include <cstring>
 #include <string>
-#include <charconv>
 #include <sstream>
 #include <map>
 #include <algorithm>
-#include <cctype>
 
-#include "wx/dcmirror.h"
 #include <stdio.h>
-#include <stdlib.h>
-#include <stddef.h>
 #include <string.h>
-#include <curl/curl.h>
-#include <math.h>
-#include <ranges>
-#include <wx/grid.h>
-#include <wx/headerctrl.h>
-#include <wx/generic/gridctrl.h>
-#include <wx/generic/grideditors.h>
-#include "wx/splitter.h"
-#include "wx/base64.h"
-#include "wx/ffile.h"
-#include "wx/mstream.h"
-#include "wx/numdlg.h"
-#include "wx/statline.h"
-#include "wx/stdpaths.h"
 #include "wx/tokenzr.h"
 #include "wx/event.h"
-#include <signal.h>
-#include <inttypes.h>
 
 
 //#include "webkit2/webkit2.h"
