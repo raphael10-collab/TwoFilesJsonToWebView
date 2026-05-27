@@ -28,16 +28,11 @@
 #include <cstring>
 #include <string>
 #include <sstream>
-#include <map>
-#include <algorithm>
 
 #include <stdio.h>
 #include <string.h>
 #include "wx/tokenzr.h"
 #include "wx/event.h"
-
-
-//#include "webkit2/webkit2.h"
 
 #include <nlohmann/json.hpp>
 
@@ -95,7 +90,7 @@ void SimulHelper::RunHello(std::string hellostring)
 
 void SimulHelper::SetWebView(wxWebView* webView)
 {
-  wxASSERT(webView);
+    wxASSERT(webView);
     m_webView = webView;
     is_simul_webview_set = true;
 }
@@ -134,9 +129,8 @@ namespace MyNs {
 
                 Bind(wxEVT_WEBVIEW_CREATED, [this](wxWebViewEvent&) { SimulConfigureWebView(); });
                 Bind(wxEVT_WEBVIEW_LOADED, &Frame::SimulOnWebViewLoaded, this);
-                Bind(wxEVT_WEBVIEW_ERROR, &Frame::OnError, this, m_browser->GetId());
+                //Bind(wxEVT_WEBVIEW_ERROR, &Frame::OnError, this, m_browser->GetId());
                 Bind(wxEVT_WEBVIEW_SCRIPT_RESULT, &Frame::OnScriptResult, this, m_browser->GetId());
-
             }
 
            private:
@@ -162,16 +156,14 @@ namespace MyNs {
                 wxWebView* m_browser;
                 wxString m_browser_backend;
                 bool m_browser_configured = false;
+                void OnError(wxWebViewEvent& evt);
                 void SimulConfigureWebView();
                 void SimulOnWebViewLoaded(wxWebViewEvent&);
-                //void SimulOnShowDevTools();
                 void SimulOnMessageError(const wxArrayString& params, const wxString& msg);
                 void SimulOnWebViewMessageReceived(wxWebViewEvent& evt);
                 void RunHello();
                 wxPanel* CreateSimulPage(wxNotebookPage* parent);
                 void OnScriptResult(wxWebViewEvent& evt);
-                void OnError(wxWebViewEvent& evt);
-                void SendStringToJS( const wxString &payload );
     };
 
 
@@ -185,101 +177,12 @@ namespace MyNs {
             return;
 
         m_browser_configured = true;
-
-      //#if USING_WEBVIEW_EDGE
-        //ICoreWebView2* webView2 = static_cast<ICoreWebView2*>(nativeBackend);
-        //HRESULT hr;
-        //wxCOMPtr<ICoreWebView2Settings> settings;
-
-        //hr = webView2->get_Settings(&settings);
-        //if ( FAILED(hr) )
-        //{
-            //wxLogError(_("Could not obtain WebView2Settings (error code 0x%08lx)."), (long)hr);
-            //return;
-        //}
-        //settings->put_IsBuiltInErrorPageEnabled(FALSE);
-        //settings->put_IsZoomControlEnabled(FALSE);
-
-        //wxCOMPtr<ICoreWebView2Settings3> settings3;
-
-        //hr = settings->QueryInterface(wxIID_PPV_ARGS(ICoreWebView2Settings3, &settings3));
-        //if ( FAILED(hr) )
-        //{
-            //wxLogError(_("Could not obtain WebView2Settings3 (error code 0x%08lx)."), (long)hr);
-            //return;
-        //}
-        //settings3->put_AreBrowserAcceleratorKeysEnabled(FALSE);
-      //#elif defined(__WXGTK__)
-        //WebKitWebView* wkv = static_cast<WebKitWebView*>(nativeBackend);
-
-        //if ( wkv )
-        //{
-            /* const char* allowList[] = {"file://", "null", nullptr};
-            webkit_web_view_set_cors_allowlist(wkv, allowList); */
-            //WebKitSettings* settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(wkv));
-            //if ( !settings )
-                //wxLogError("Could not obtain WebKitSettings to allow universal access from file URLs.");
-            //else
-                //webkit_settings_set_allow_universal_access_from_file_urls(settings, true);
-        //}
-      //#endif // #if USING_WEBVIEW_EDGE
     }
-
 
     void Frame::SimulOnWebViewLoaded(wxWebViewEvent&)
     {
         RunHello();
     }
-
-    //void Frame::SimulOnShowDevTools()
-    //{
-        //void* nativeBackend = m_browser->GetNativeBackend();
-        //if ( !nativeBackend )
-        //{
-            //return;
-        //}
-
-    //#if defined(__WXGTK__)
-        //if ( m_browser_backend == wxWebViewBackendWebKit )
-        //{
-            //WebKitWebView* wkv = static_cast<WebKitWebView*>(nativeBackend);
-            //if ( wkv )
-            //{
-                //WebKitSettings* settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(wkv));
-                //if ( !settings )
-                //{
-                    //wxLogError(_("Could not open DevTools (failed to obtain WebKitSettings)."));
-                    //return;
-                //}
-                //g_object_set(settings, "enable-developer-extras", TRUE, NULL);
-                //WebKitWebInspector *inspector = webkit_web_view_get_inspector(WEBKIT_WEB_VIEW(wkv));
-                //if ( !inspector )
-                //{
-                    //wxLogError(_("Could not open DevTools (failed to obtain WebKitInspector)."));
-                    //return;
-                //}
-                //webkit_web_inspector_show(inspector);
-                //return;
-             //}
-             //m_browser->ShowDevTools();
-         //}
-    //#endif // #elif defined(__WXGTK__)
-
-    //#if defined(__WXMSW__)
-    //if ( m_browser_backend == wxWebViewBackendEdge )
-    //{
-      //#if USING_WEBVIEW_EDGE
-        //ICoreWebView2* webView2 = static_cast<ICoreWebView2*>(nativeBackend);
-        //const HRESULT hr = webView2->OpenDevToolsWindow();
-
-        //if ( FAILED(hr) )
-            //wxLogError(_("Could not open DevTools window (error code 0x%08lx)."), (long)hr);
-        //return;
-      //#endif //#if USING_WEBVIEW_EDGE
-    //}
-    //#endif
-        //m_browser->ShowDevTools();
-    //}
 
     void Frame::SimulOnMessageError(const wxArrayString& params, const wxString& msg)
     {
@@ -394,40 +297,32 @@ namespace MyNs {
             wxLogMessage("Async script result received; value = %s", evt.GetString());
     }
 
-    void Frame::OnError(wxWebViewEvent& evt)
-    {
-    #define WX_ERROR_CASE(type) \
-        case type: \
-            category = #type; \
-            break;
+    //void Frame::OnError(wxWebViewEvent& evt)
+    //{
+    //#define WX_ERROR_CASE(type) \
+        //case type: \
+            //category = #type; \
+            //break;
 
-        wxString category;
-        switch (evt.GetInt())
-        {
-            WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_CONNECTION);
-            WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_CERTIFICATE);
-            WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_AUTH);
-            WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_SECURITY);
-            WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_NOT_FOUND);
-            WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_REQUEST);
-            WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_USER_CANCELLED);
-            WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_OTHER);
-        }
-
-        wxLogMessage("Error; url='%s', error='%s (%s)'",
-                 evt.GetURL(), category, evt.GetString());
-
+        //wxString category;
+        //switch (evt.GetInt())
+        //{
+            //WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_CONNECTION);
+            //WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_CERTIFICATE);
+            //WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_AUTH);
+            //WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_SECURITY);
+            //WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_NOT_FOUND);
+            //WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_REQUEST);
+            //WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_USER_CANCELLED);
+            //WX_ERROR_CASE(wxWEBVIEW_NAV_ERR_OTHER);
+        //}
+        //wxLogMessage("Error; url='%s', error='%s (%s)'",
+                 //evt.GetURL(), category, evt.GetString());
         //Show the info bar with an error
-        m_info->ShowMessage(_("An error occurred loading ") + evt.GetURL() + "\n" +
-        "'" + category + "'", wxICON_ERROR);
+        //m_info->ShowMessage(_("An error occurred loading ") + evt.GetURL() + "\n" +
+        //"'" + category + "'", wxICON_ERROR);
+    //}
 
-    }
-
-    void Frame::SendStringToJS( const wxString &payload )
-    {
-        wxString js = wxString::Format("Foo('%s');", payload);
-        m_browser->RunScript(js);
-    }
 
     class Application : public wxApp {
 
