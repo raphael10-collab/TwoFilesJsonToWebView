@@ -216,6 +216,8 @@ namespace MyNs {
 
                 CreateSimulPage(tabPageH);
 
+                Bind(wxEVT_WEBVIEW_CREATED, [this](wxWebViewEvent&) { SimulConfigureWebView(); });
+                Bind(wxEVT_WEBVIEW_LOADED, &Frame::SimulOnWebViewLoaded, this);
                 Bind(wxEVT_WEBVIEW_ERROR, &Frame::OnError, this, m_browser->GetId());
                 Bind(wxEVT_WEBVIEW_SCRIPT_RESULT, &Frame::OnScriptResult, this, m_browser->GetId());
 
@@ -245,6 +247,7 @@ namespace MyNs {
                 wxString m_browser_backend;
                 bool m_browser_configured = false;
                 void SimulConfigureWebView();
+                void SimulOnWebViewLoaded(wxWebViewEvent&);
                 //void SimulOnShowDevTools();
                 void SimulOnMessageError(const wxArrayString& params, const wxString& msg);
                 void SimulOnWebViewMessageReceived(wxWebViewEvent& evt);
@@ -306,6 +309,11 @@ namespace MyNs {
       //#endif // #if USING_WEBVIEW_EDGE
     }
 
+
+    void Frame::SimulOnWebViewLoaded(wxWebViewEvent&)
+    {
+        RunHello();
+    }
 
     //void Frame::SimulOnShowDevTools()
     //{
@@ -458,8 +466,6 @@ namespace MyNs {
         m_browser->ShowDevTools();
         //ScenarioSimulationOnShowDevTools();
         SimulConfigureWebView();
-
-        RunHello();
 
         return simulPanel;
     }
