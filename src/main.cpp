@@ -1,5 +1,3 @@
-#include <sqlite3.h>
-
 #include "wx/wx.h"
 #include "wx/app.h"
 #include <wx/sckipc.h>
@@ -16,8 +14,6 @@
 #include "wx/dataview.h"
 #include <wx/hyperlink.h>
 #include "wx/datetime.h"
-#include "time.h"
-#include <ctime>
 #include "wx/scrolwin.h"
 #include "wx/glcanvas.h"
 #include <wx/persist/toplevel.h>
@@ -89,13 +85,8 @@
 #include "wx/textctrl.h"
 #endif
 
-#include <sys/stat.h>
 #include <filesystem>
-#include <cstdlib>
-#include <clocale>
-#include <cstdio>
 #include <iostream>
-#include <format>
 #include <text_encoding>
 #include <cstring>
 #include <string>
@@ -105,17 +96,6 @@
 #include <algorithm>
 #include <cctype>
 
-#include <thread>
-#include <future>
-#include "chrono"
-
-#include <typeinfo>
-#include <cxxabi.h>
-#include <fstream>
-#include <cstdlib> // for exit function
-#include <utility>
-#include <memory>
-#include <type_traits>
 #include "wx/dcmirror.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -141,7 +121,7 @@
 #include <inttypes.h>
 
 
-#include "webkit2/webkit2.h"
+//#include "webkit2/webkit2.h"
 
 #include <nlohmann/json.hpp>
 
@@ -265,7 +245,7 @@ namespace MyNs {
                 wxString m_browser_backend;
                 bool m_browser_configured = false;
                 void SimulConfigureWebView();
-                void SimulOnShowDevTools();
+                //void SimulOnShowDevTools();
                 void SimulOnMessageError(const wxArrayString& params, const wxString& msg);
                 void SimulOnWebViewMessageReceived(wxWebViewEvent& evt);
                 void RunHello();
@@ -287,96 +267,95 @@ namespace MyNs {
 
         m_browser_configured = true;
 
-      #if USING_WEBVIEW_EDGE
-        ICoreWebView2* webView2 = static_cast<ICoreWebView2*>(nativeBackend);
-        HRESULT hr;
-        wxCOMPtr<ICoreWebView2Settings> settings;
+      //#if USING_WEBVIEW_EDGE
+        //ICoreWebView2* webView2 = static_cast<ICoreWebView2*>(nativeBackend);
+        //HRESULT hr;
+        //wxCOMPtr<ICoreWebView2Settings> settings;
 
-        hr = webView2->get_Settings(&settings);
-        if ( FAILED(hr) )
-        {
-            wxLogError(_("Could not obtain WebView2Settings (error code 0x%08lx)."), (long)hr);
-            return;
-        }
-        settings->put_IsBuiltInErrorPageEnabled(FALSE);
-        settings->put_IsZoomControlEnabled(FALSE);
+        //hr = webView2->get_Settings(&settings);
+        //if ( FAILED(hr) )
+        //{
+            //wxLogError(_("Could not obtain WebView2Settings (error code 0x%08lx)."), (long)hr);
+            //return;
+        //}
+        //settings->put_IsBuiltInErrorPageEnabled(FALSE);
+        //settings->put_IsZoomControlEnabled(FALSE);
 
-        wxCOMPtr<ICoreWebView2Settings3> settings3;
+        //wxCOMPtr<ICoreWebView2Settings3> settings3;
 
-        hr = settings->QueryInterface(wxIID_PPV_ARGS(ICoreWebView2Settings3, &settings3));
-        if ( FAILED(hr) )
-        {
-            wxLogError(_("Could not obtain WebView2Settings3 (error code 0x%08lx)."), (long)hr);
-            return;
-        }
-        settings3->put_AreBrowserAcceleratorKeysEnabled(FALSE);
-      #elif defined(__WXGTK__)
-        WebKitWebView* wkv = static_cast<WebKitWebView*>(nativeBackend);
+        //hr = settings->QueryInterface(wxIID_PPV_ARGS(ICoreWebView2Settings3, &settings3));
+        //if ( FAILED(hr) )
+        //{
+            //wxLogError(_("Could not obtain WebView2Settings3 (error code 0x%08lx)."), (long)hr);
+            //return;
+        //}
+        //settings3->put_AreBrowserAcceleratorKeysEnabled(FALSE);
+      //#elif defined(__WXGTK__)
+        //WebKitWebView* wkv = static_cast<WebKitWebView*>(nativeBackend);
 
-        if ( wkv )
-        {
+        //if ( wkv )
+        //{
             /* const char* allowList[] = {"file://", "null", nullptr};
             webkit_web_view_set_cors_allowlist(wkv, allowList); */
-            WebKitSettings* settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(wkv));
-            if ( !settings )
-                wxLogError("Could not obtain WebKitSettings to allow universal access from file URLs.");
-            else
-                webkit_settings_set_allow_universal_access_from_file_urls(settings, true);
-        }
-      #endif // #if USING_WEBVIEW_EDGE
+            //WebKitSettings* settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(wkv));
+            //if ( !settings )
+                //wxLogError("Could not obtain WebKitSettings to allow universal access from file URLs.");
+            //else
+                //webkit_settings_set_allow_universal_access_from_file_urls(settings, true);
+        //}
+      //#endif // #if USING_WEBVIEW_EDGE
     }
 
 
-    void Frame::SimulOnShowDevTools()
-    {
-        void* nativeBackend = m_browser->GetNativeBackend();
+    //void Frame::SimulOnShowDevTools()
+    //{
+        //void* nativeBackend = m_browser->GetNativeBackend();
+        //if ( !nativeBackend )
+        //{
+            //return;
+        //}
 
-        if ( !nativeBackend )
-        {
-            return;
-        }
+    //#if defined(__WXGTK__)
+        //if ( m_browser_backend == wxWebViewBackendWebKit )
+        //{
+            //WebKitWebView* wkv = static_cast<WebKitWebView*>(nativeBackend);
+            //if ( wkv )
+            //{
+                //WebKitSettings* settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(wkv));
+                //if ( !settings )
+                //{
+                    //wxLogError(_("Could not open DevTools (failed to obtain WebKitSettings)."));
+                    //return;
+                //}
+                //g_object_set(settings, "enable-developer-extras", TRUE, NULL);
+                //WebKitWebInspector *inspector = webkit_web_view_get_inspector(WEBKIT_WEB_VIEW(wkv));
+                //if ( !inspector )
+                //{
+                    //wxLogError(_("Could not open DevTools (failed to obtain WebKitInspector)."));
+                    //return;
+                //}
+                //webkit_web_inspector_show(inspector);
+                //return;
+             //}
+             //m_browser->ShowDevTools();
+         //}
+    //#endif // #elif defined(__WXGTK__)
 
-    #if defined(__WXGTK__)
-        if ( m_browser_backend == wxWebViewBackendWebKit )
-        {
-            WebKitWebView* wkv = static_cast<WebKitWebView*>(nativeBackend);
-            if ( wkv )
-            {
-                WebKitSettings* settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(wkv));
-                if ( !settings )
-                {
-                    wxLogError(_("Could not open DevTools (failed to obtain WebKitSettings)."));
-                    return;
-                }
-                g_object_set(settings, "enable-developer-extras", TRUE, NULL);
-                WebKitWebInspector *inspector = webkit_web_view_get_inspector(WEBKIT_WEB_VIEW(wkv));
-                if ( !inspector )
-                {
-                    wxLogError(_("Could not open DevTools (failed to obtain WebKitInspector)."));
-                    return;
-                }
-                webkit_web_inspector_show(inspector);
-                return;
-             }
-             m_browser->ShowDevTools();
-         }
-    #endif // #elif defined(__WXGTK__)
+    //#if defined(__WXMSW__)
+    //if ( m_browser_backend == wxWebViewBackendEdge )
+    //{
+      //#if USING_WEBVIEW_EDGE
+        //ICoreWebView2* webView2 = static_cast<ICoreWebView2*>(nativeBackend);
+        //const HRESULT hr = webView2->OpenDevToolsWindow();
 
-    #if defined(__WXMSW__)
-    if ( m_browser_backend == wxWebViewBackendEdge )
-    {
-      #if USING_WEBVIEW_EDGE
-        ICoreWebView2* webView2 = static_cast<ICoreWebView2*>(nativeBackend);
-        const HRESULT hr = webView2->OpenDevToolsWindow();
-
-        if ( FAILED(hr) )
-            wxLogError(_("Could not open DevTools window (error code 0x%08lx)."), (long)hr);
-        return;
-      #endif //#if USING_WEBVIEW_EDGE
-    }
-    #endif
-        m_browser->ShowDevTools();
-    }
+        //if ( FAILED(hr) )
+            //wxLogError(_("Could not open DevTools window (error code 0x%08lx)."), (long)hr);
+        //return;
+      //#endif //#if USING_WEBVIEW_EDGE
+    //}
+    //#endif
+        //m_browser->ShowDevTools();
+    //}
 
     void Frame::SimulOnMessageError(const wxArrayString& params, const wxString& msg)
     {
